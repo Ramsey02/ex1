@@ -6,11 +6,11 @@
 RLEList asciiArtRead(FILE* in_stream)
 { //!?
     RLEList ArtList=RLEListCreate();
-    char* tmpStr[1];
+    char* tmpStr= malloc(sizeof (*tmpStr));
     char tmpLetter;
     while(fgets(tmpStr, 1, in_stream) != NULL)
     {
-        tmpLetter=(char)tmpStr;
+        tmpLetter=tmpStr[0];
         RLEListAppend(ArtList,tmpLetter);
     }
     return ArtList;
