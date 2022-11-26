@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "RLEList.h"
 #include <string.h>
-#define ERROR_INT -1
+#define ERROR_INT (-1)
 char* ReverseNumber(int num);
 
 
@@ -197,22 +197,28 @@ char* RLEListExportToString(RLEList list, RLEListResult* result)
         return NULL;
     }
     int index=0;
-    RLEList tmpList=list;
-    while(tmpList!=NULL)
+    if(list->next==NULL)
     {
-        str[index++]=tmpList->character;
-        char* tempSequence=ReverseNumber(tmpList->sequenceNum);
-        int counter=0;
-        int index2=strlen(tempSequence);
-        while(counter<index2)
-        {
-            str[index++]=tempSequence[index2--];
-            counter++;
-        }
-        str[index++]='\n';
-        tmpList=tmpList->next;
+        return "";
     }
-    *result=RLE_LIST_SUCCESS;
+    RLEList tmpList=list->next;
+    char* tempSequence= malloc(sizeof (*tempSequence));
+    while(tmpList!=NULL) {
+        str[index++] = tmpList->character;
+        // char* tempSequence=ReverseNumber(tmpList->sequenceNum);
+        sprintf(tempSequence, "%d", tmpList->sequenceNum);
+
+        while (*tempSequence) {
+            str[index++] = *(tempSequence++);
+        }
+        str[index++] = '\n';
+        tmpList = tmpList->next;
+    }
+     free(tempSequence);
+    if(result!=NULL) {
+        *result = RLE_LIST_SUCCESS;
+    }
+    str[index]='\0';
     return str;
 }
 

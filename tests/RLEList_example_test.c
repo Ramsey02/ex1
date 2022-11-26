@@ -52,12 +52,10 @@ int main(int argc, char **argv)
     RUN_TEST(tests[test_idx - 1], tests_names[test_idx - 1]);
     return 0;
 }
-
 bool basicTest(){
     RLEList list = RLEListCreate();
     bool result=true;
     ASSERT_TEST(list != NULL, destroy);
-
     //adding elements to the list
     ASSERT_TEST(RLEListAppend(list, 'a') == RLE_LIST_SUCCESS, destroy);    // a
     ASSERT_TEST(RLEListAppend(list, 'c') == RLE_LIST_SUCCESS, destroy);    // ac
@@ -70,8 +68,14 @@ bool basicTest(){
     ASSERT_TEST(RLEListAppend(list, 'a') == RLE_LIST_SUCCESS, destroy);    // acbababaa
     ASSERT_TEST(RLEListAppend(list, 'a') == RLE_LIST_SUCCESS, destroy);    // acbababaaa
 
-    ASSERT_TEST(RLEListRemove(list, 1) == RLE_LIST_SUCCESS, destroy); // abababaaa
+ /*   for(int i=0;i<15;i++)
+        ASSERT_TEST(RLEListAppend(list, 'G') == RLE_LIST_SUCCESS, destroy);
 
+    char* export= RLEListExportToString(list,NULL);
+    printf("%s",export);
+    int x=0;
+*/
+    ASSERT_TEST(RLEListRemove(list, 1) == RLE_LIST_SUCCESS, destroy); // abababaaa
     // check if the represented string is "abababaaa"
     const char *s = "abababaaa";
     char it;
