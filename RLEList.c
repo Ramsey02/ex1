@@ -2,7 +2,6 @@
 #include "RLEList.h"
 #include <string.h>
 #define ERROR_INT (-1)
-char* ReverseNumber(int num);
 
 
 struct RLEList_t{
@@ -220,21 +219,4 @@ char* RLEListExportToString(RLEList list, RLEListResult* result)
     }
     str[index]='\0';
     return str;
-}
-
-char* ReverseNumber(int num)
-{
-    char* result=malloc(sizeof(*result));
-    if(result==NULL)
-    {
-        return NULL;
-    }
-    int index=0;
-    while (num>0)
-    {
-        char temp=num%10;
-        result[index++]=temp;
-        num=num/10;
-    }
-    return result;
 }
