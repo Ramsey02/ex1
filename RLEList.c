@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "RLEList.h"
-#include <string.h>
 #define ERROR_INT (-1)
 
 
