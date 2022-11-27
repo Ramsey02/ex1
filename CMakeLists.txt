@@ -7,7 +7,7 @@ include_directories(.)
 include_directories(tests)
 
 add_executable(ex1
-        tests/RLEList_example_test.c
+        tests/RLEListUnitTest.c
         tests/test_utilities.h
         RLEList.c
         RLEList.h)

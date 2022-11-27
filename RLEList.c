@@ -1,7 +1,11 @@
 #include <stdlib.h>
 #include "RLEList.h"
 #define ERROR_INT (-1)
+#define THREE 3
+int getMaxSize(RLEList list);
+int Digits_Num(int n);
 
+static void toDelete(RLEList list, int index);
 
 struct RLEList_t{
     char character;
@@ -85,8 +89,8 @@ RLEListResult RLEListRemove(RLEList list, int index)
     {
         return RLE_LIST_INDEX_OUT_OF_BOUNDS;
     }
-    RLEList tmpList=list;
-    int currentIndex=tmpList->sequenceNum-1;
+    RLEList tmpList=list->next;
+    int currentIndex=(tmpList->sequenceNum-1);
     while(currentIndex<index)
     {
         tmpList=tmpList->next;
@@ -105,7 +109,9 @@ RLEListResult RLEListRemove(RLEList list, int index)
     }
     tmpList2->next=tmpList->next;
     free(tmpList);
-
+    if(tmpList2->next==NULL) {
+        return RLE_LIST_SUCCESS;
+    }
     if( tmpList2->next->character==tmpList2->character)
     {
         RLEList tmpList3=tmpList2->next;
@@ -148,24 +154,31 @@ char RLEListGet(RLEList list, int index, RLEListResult *result)
     return tmpList->character;
 
 }
+
 RLEListResult RLEListMap(RLEList list, MapFunction map_function)
 {
     if (list==NULL)
     {
         return RLE_LIST_NULL_ARGUMENT;
     }
-    RLEList tmpList=list;
+    if(map_function==NULL)
+    {
+        return RLE_LIST_NULL_ARGUMENT;
+    }
+    RLEList tmpList=list->next;
     while (tmpList!=NULL)
     {
         tmpList->character=map_function(tmpList->character);
         tmpList=tmpList->next;
     }
-    RLEList tmpList1=list;
-    if(tmpList1->next==NULL)
+    RLEList tmpList1=list->next;
+    // free(tmpList);
+    if(tmpList1==NULL || tmpList1->next==NULL)
     {
         return RLE_LIST_SUCCESS;
     }
     RLEList tmpList2=tmpList1->next;
+    int index=2; //!? TWO define!
     while(tmpList1!=NULL)
     {
         while(tmpList2!=NULL && tmpList2->character==tmpList1->character)
@@ -173,34 +186,45 @@ RLEListResult RLEListMap(RLEList list, MapFunction map_function)
             tmpList1->sequenceNum+=tmpList2->sequenceNum;
             RLEList toDelete=tmpList2;
             tmpList2=tmpList2->next;
+            tmpList1->next=tmpList2;
             free(toDelete);
         }
-        tmpList1->next=tmpList2;
-        tmpList1=tmpList1->next;
-        tmpList2=tmpList2->next;
+        tmpList1=tmpList2;
+        if(tmpList2!=NULL) {
+            tmpList2 = tmpList2->next;
+        }
+        else{
+            return RLE_LIST_SUCCESS;
+        }
+        index++;
     }
     return RLE_LIST_SUCCESS;
 }
 char* RLEListExportToString(RLEList list, RLEListResult* result)
 {
     if (list==NULL)
-    {
-        *result=RLE_LIST_NULL_ARGUMENT;
+    { //!? need to check with result!!!!!!
+    if(result) {
+        *result = RLE_LIST_NULL_ARGUMENT;
+    }
         return NULL;
     }
-    char *str=malloc(sizeof(*str));
+    int totalSize= RLEListSize(list);
+    char *str=malloc((THREE*totalSize)+1);
     if(str==NULL)
     {
-        *result=RLE_LIST_OUT_OF_MEMORY;
+        if(result) {
+            *result = RLE_LIST_NULL_ARGUMENT;
+        }
         return NULL;
     }
     int index=0;
-    if(list->next==NULL)
-    {
-        return "";
-    }
+   // if(list->next==NULL)
+  //  {
+  //      return "";
+  //  }
     RLEList tmpList=list->next;
-    char* tempSequence= malloc(sizeof (*tempSequence));
+    char* tempSequence= malloc(sizeof (tempSequence)*(3*totalSize-1)); //!? 3
     while(tmpList!=NULL) {
         str[index++] = tmpList->character;
         // char* tempSequence=ReverseNumber(tmpList->sequenceNum);
@@ -209,13 +233,51 @@ char* RLEListExportToString(RLEList list, RLEListResult* result)
         while (*tempSequence) {
             str[index++] = *(tempSequence++);
         }
-        str[index++] = '\n';
+       str[index++] = '\n';
         tmpList = tmpList->next;
+
     }
-     free(tempSequence);
-    if(result!=NULL) {
+    if(result) {
         *result = RLE_LIST_SUCCESS;
     }
-    str[index]='\0';
+    str[index++] = '\0';
+  // free(tempSequence);
     return str;
+}
+
+static void toDelete(RLEList list, int index)
+{
+    RLEList tmpList1=list;
+    for(int i=0;i<index;i++)
+    {
+        tmpList1=tmpList1->next;
+    }
+
+}
+
+
+int getMaxSize(RLEList list)
+{
+    int nodesNum=0;
+    int maxDigits=0;
+    RLEList tmpList=list;
+    while(tmpList!=NULL)
+    {
+        nodesNum++;
+        if(maxDigits<Digits_Num(tmpList->sequenceNum))
+        {
+            maxDigits=(Digits_Num(tmpList->sequenceNum))+2;
+        }
+        tmpList=tmpList->next;
+    }
+    return (nodesNum*maxDigits+1);
+}
+
+int Digits_Num(int n) {
+    int count = 0;
+    while (n != 0) {
+        n = n / 10;
+        ++count;
+    }
+    return count;
 }
