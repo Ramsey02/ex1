@@ -1,6 +1,7 @@
 # ninja log v5
-2	79	6912600470147618	CMakeFiles/ex1.dir/RLEList.c.obj	33ad9e79f13a548f
+0	122	6924824323759505	build.ninja	150069acdb9d0df
 111	179	6912603947154908	ex1.exe	c4c10be440575810
-1	86	6912602524230198	CMakeFiles/ex1.dir/tests/RLEList_example_test.c.obj	6fb68f953909d05
-0	122	6912604027554255	build.ninja	150069acdb9d0df
-2	110	6912603946502165	CMakeFiles/ex1.dir/tests/RLEListUnitTest.c.obj	bcf7cfe647212e8e
+0	91	6924824570644440	CMakeFiles/ex1.dir/tool/AsciiArtTool.c.obj	665586ccdfadb77e
+4	94	6924824570644440	CMakeFiles/ex1.dir/tool/main.c.obj	53856676781b9e85
+7	105	6924824570800675	CMakeFiles/ex1.dir/RLEList.c.obj	33ad9e79f13a548f
+105	202	6924824571742696	ex1.exe	1310cb5412a7cfed

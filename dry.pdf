@@ -1,0 +1,31 @@
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
+#include "assert.h"
+
+
+char* stringDuplicator(char* str, int times) // s changed to str for code convention reasons
+{
+    assert(str!=NULL); // was asserting the opposite assert
+    assert(times > 0);
+    int len = (int)strlen(str); // LEN changed to len for code convention reasons
+    char* out = malloc(len*times* sizeof(out)); //forgot sizeof
+    assert(out!=NULL); // was asserting the opposite assert
+    for (int i=0; i<times; i++) // < and not <=
+    {
+        strcpy(out,str); // switched this line with the other one
+        out = out + len;
+    }
+    out -= len*times; // returning pnt out to the first of the string
+    // free(out); // where is this should be?
+    return out;
+
+}
+
+
+int main() {
+    printf("Hello, World!\n");
+    char* out=stringDuplicator("Hello",3);
+    printf("%s\n",out);
+    return 0;
+}

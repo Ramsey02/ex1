@@ -2,10 +2,9 @@
 #include "RLEList.h"
 #define ERROR_INT (-1)
 #define THREE 3
-int getMaxSize(RLEList list);
-int Digits_Num(int n);
 
-static void toDelete(RLEList list, int index);
+
+
 
 struct RLEList_t{
     char character;
@@ -23,6 +22,7 @@ RLEList RLEListCreate()
     }
     newRLEList->next=NULL;
     newRLEList->sequenceNum=0;
+    newRLEList->character=0;
     return newRLEList;
 }
 void RLEListDestroy(RLEList list)
@@ -225,7 +225,8 @@ char* RLEListExportToString(RLEList list, RLEListResult* result)
   //  }
     RLEList tmpList=list->next;
     char* tempSequence= malloc(sizeof (tempSequence)*(3*totalSize-1)); //!? 3
-    while(tmpList!=NULL) {
+    while(tmpList!=NULL) 
+    {
         str[index++] = tmpList->character;
         // char* tempSequence=ReverseNumber(tmpList->sequenceNum);
         sprintf(tempSequence, "%d", tmpList->sequenceNum);
@@ -242,42 +243,6 @@ char* RLEListExportToString(RLEList list, RLEListResult* result)
     }
     str[index++] = '\0';
   // free(tempSequence);
+
     return str;
-}
-
-static void toDelete(RLEList list, int index)
-{
-    RLEList tmpList1=list;
-    for(int i=0;i<index;i++)
-    {
-        tmpList1=tmpList1->next;
-    }
-
-}
-
-
-int getMaxSize(RLEList list)
-{
-    int nodesNum=0;
-    int maxDigits=0;
-    RLEList tmpList=list;
-    while(tmpList!=NULL)
-    {
-        nodesNum++;
-        if(maxDigits<Digits_Num(tmpList->sequenceNum))
-        {
-            maxDigits=(Digits_Num(tmpList->sequenceNum))+2;
-        }
-        tmpList=tmpList->next;
-    }
-    return (nodesNum*maxDigits+1);
-}
-
-int Digits_Num(int n) {
-    int count = 0;
-    while (n != 0) {
-        n = n / 10;
-        ++count;
-    }
-    return count;
 }

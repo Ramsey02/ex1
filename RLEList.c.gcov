@@ -1,0 +1,250 @@
+        -:    0:Source:RLEList.c
+        -:    0:Programs:1
+        -:    1:#include <stdlib.h>
+        -:    2:#include "RLEList.h"
+        -:    3:#define ERROR_INT (-1)
+        -:    4:#define THREE 3
+        -:    5:
+        -:    6:
+        -:    7:
+        -:    8:
+        -:    9:struct RLEList_t{
+        -:   10:    char character;
+        -:   11:    int sequenceNum;
+        -:   12:    struct  RLEList_t* next;
+        -:   13:
+        -:   14:};
+        -:   15:
+    #####:   16:RLEList RLEListCreate()
+        -:   17:{
+    #####:   18:    RLEList newRLEList = malloc(sizeof(*newRLEList));
+    #####:   19:    if(!newRLEList)
+        -:   20:    {
+    #####:   21:        return NULL;
+        -:   22:    }
+    #####:   23:    newRLEList->next=NULL;
+    #####:   24:    newRLEList->sequenceNum=0;
+    #####:   25:    newRLEList->character=0;
+    #####:   26:    return newRLEList;
+        -:   27:}
+    #####:   28:void RLEListDestroy(RLEList list)
+        -:   29:{
+    #####:   30:    while (list)
+        -:   31:    {
+    #####:   32:        RLEList toDelete=list;
+    #####:   33:        list=list ->next;
+    #####:   34:        free(toDelete);
+        -:   35:    }
+        -:   36:
+    #####:   37:}
+        -:   38:
+    #####:   39:RLEListResult RLEListAppend(RLEList list, char value)
+        -:   40:{
+    #####:   41:    if(list==NULL|| value==0)
+        -:   42:    {
+    #####:   43:        return RLE_LIST_NULL_ARGUMENT;
+        -:   44:    }
+    #####:   45:    RLEList tmpList=list;
+    #####:   46:    while(tmpList->next!=NULL)
+        -:   47:    {
+    #####:   48:        tmpList=tmpList->next;
+        -:   49:    }
+    #####:   50:    if(tmpList->character==value)
+        -:   51:    {
+    #####:   52:        tmpList->sequenceNum++;
+    #####:   53:        return RLE_LIST_SUCCESS;
+        -:   54:    }
+    #####:   55:    RLEList newRLEList=RLEListCreate();
+    #####:   56:    if(!newRLEList)
+        -:   57:    {
+    #####:   58:        return RLE_LIST_OUT_OF_MEMORY;
+        -:   59:    }
+    #####:   60:    newRLEList->character=value;
+    #####:   61:    newRLEList->sequenceNum=1;
+    #####:   62:    tmpList->next=newRLEList;
+    #####:   63:    return RLE_LIST_SUCCESS;
+        -:   64:}
+        -:   65:
+    #####:   66:int RLEListSize(RLEList list)
+        -:   67:{
+    #####:   68:    if (list==NULL)
+        -:   69:    {
+    #####:   70:        return ERROR_INT;
+        -:   71:    }
+    #####:   72:    RLEList tmpList=list;
+    #####:   73:    int counter=0;
+    #####:   74:    while(tmpList!=NULL)
+        -:   75:    {
+    #####:   76:        counter+=tmpList->sequenceNum;
+    #####:   77:        tmpList=tmpList->next;
+        -:   78:    }
+    #####:   79:    return counter;
+        -:   80:}
+        -:   81:
+    #####:   82:RLEListResult RLEListRemove(RLEList list, int index)
+        -:   83:{
+    #####:   84:    if (list==NULL)
+        -:   85:    {
+    #####:   86:        return RLE_LIST_NULL_ARGUMENT;
+        -:   87:    }
+    #####:   88:    if(index+1>RLEListSize(list)||index<0)
+        -:   89:    {
+    #####:   90:        return RLE_LIST_INDEX_OUT_OF_BOUNDS;
+        -:   91:    }
+    #####:   92:    RLEList tmpList=list->next;
+    #####:   93:    int currentIndex=(tmpList->sequenceNum-1);
+    #####:   94:    while(currentIndex<index)
+        -:   95:    {
+    #####:   96:        tmpList=tmpList->next;
+    #####:   97:        currentIndex+=tmpList->sequenceNum;
+        -:   98:    }
+    #####:   99:    if (tmpList->sequenceNum>1)
+        -:  100:    {
+    #####:  101:        tmpList->sequenceNum--;
+    #####:  102:        return RLE_LIST_SUCCESS;
+        -:  103:    }
+    #####:  104:    RLEList tmpList2=list;
+    #####:  105:    while (tmpList2->next!=tmpList)
+        -:  106:    {
+    #####:  107:        tmpList2=tmpList2->next;
+        -:  108:
+        -:  109:    }
+    #####:  110:    tmpList2->next=tmpList->next;
+    #####:  111:    free(tmpList);
+    #####:  112:    if(tmpList2->next==NULL) {
+    #####:  113:        return RLE_LIST_SUCCESS;
+        -:  114:    }
+    #####:  115:    if( tmpList2->next->character==tmpList2->character)
+        -:  116:    {
+    #####:  117:        RLEList tmpList3=tmpList2->next;
+    #####:  118:        tmpList2->sequenceNum+=tmpList3->sequenceNum;
+    #####:  119:        tmpList2->next=tmpList3->next;
+    #####:  120:        free(tmpList3);
+        -:  121:    }
+    #####:  122:    return RLE_LIST_SUCCESS;
+        -:  123:}
+        -:  124:
+    #####:  125:char RLEListGet(RLEList list, int index, RLEListResult *result)
+        -:  126:{
+    #####:  127:    if (list==NULL)
+        -:  128:    {
+    #####:  129:        if (result!=NULL)
+        -:  130:        {
+    #####:  131:            *result=RLE_LIST_NULL_ARGUMENT;
+        -:  132:        }
+    #####:  133:        return 0;
+        -:  134:    }
+    #####:  135:    if(index+1>RLEListSize(list)||index<0)
+        -:  136:    {
+    #####:  137:        if (result!=NULL)
+        -:  138:        {
+    #####:  139:            *result=RLE_LIST_INDEX_OUT_OF_BOUNDS;
+        -:  140:        }
+    #####:  141:        return 0;
+        -:  142:    }
+    #####:  143:    RLEList tmpList=list;
+    #####:  144:    int currentIndex=tmpList->sequenceNum-1;
+    #####:  145:    while (currentIndex<index)
+        -:  146:    {
+    #####:  147:        tmpList=tmpList->next;
+    #####:  148:        currentIndex+=tmpList->sequenceNum;
+        -:  149:    }
+    #####:  150:    if(result!=NULL)
+        -:  151:    {
+    #####:  152:        *result=RLE_LIST_SUCCESS;//??
+        -:  153:    }
+    #####:  154:    return tmpList->character;
+        -:  155:
+        -:  156:}
+        -:  157:
+    #####:  158:RLEListResult RLEListMap(RLEList list, MapFunction map_function)
+        -:  159:{
+    #####:  160:    if (list==NULL)
+        -:  161:    {
+    #####:  162:        return RLE_LIST_NULL_ARGUMENT;
+        -:  163:    }
+    #####:  164:    if(map_function==NULL)
+        -:  165:    {
+    #####:  166:        return RLE_LIST_NULL_ARGUMENT;
+        -:  167:    }
+    #####:  168:    RLEList tmpList=list->next;
+    #####:  169:    while (tmpList!=NULL)
+        -:  170:    {
+    #####:  171:        tmpList->character=map_function(tmpList->character);
+    #####:  172:        tmpList=tmpList->next;
+        -:  173:    }
+    #####:  174:    RLEList tmpList1=list->next;
+        -:  175:    // free(tmpList);
+    #####:  176:    if(tmpList1==NULL || tmpList1->next==NULL)
+        -:  177:    {
+    #####:  178:        return RLE_LIST_SUCCESS;
+        -:  179:    }
+    #####:  180:    RLEList tmpList2=tmpList1->next;
+    #####:  181:    int index=2; //!? TWO define!
+    #####:  182:    while(tmpList1!=NULL)
+        -:  183:    {
+    #####:  184:        while(tmpList2!=NULL && tmpList2->character==tmpList1->character)
+        -:  185:        {
+    #####:  186:            tmpList1->sequenceNum+=tmpList2->sequenceNum;
+    #####:  187:            RLEList toDelete=tmpList2;
+    #####:  188:            tmpList2=tmpList2->next;
+    #####:  189:            tmpList1->next=tmpList2;
+    #####:  190:            free(toDelete);
+        -:  191:        }
+    #####:  192:        tmpList1=tmpList2;
+    #####:  193:        if(tmpList2!=NULL) {
+    #####:  194:            tmpList2 = tmpList2->next;
+        -:  195:        }
+        -:  196:        else{
+    #####:  197:            return RLE_LIST_SUCCESS;
+        -:  198:        }
+    #####:  199:        index++;
+        -:  200:    }
+    #####:  201:    return RLE_LIST_SUCCESS;
+        -:  202:}
+    #####:  203:char* RLEListExportToString(RLEList list, RLEListResult* result)
+        -:  204:{
+    #####:  205:    if (list==NULL)
+        -:  206:    { //!? need to check with result!!!!!!
+    #####:  207:    if(result) {
+    #####:  208:        *result = RLE_LIST_NULL_ARGUMENT;
+        -:  209:    }
+    #####:  210:        return NULL;
+        -:  211:    }
+    #####:  212:    int totalSize= RLEListSize(list);
+    #####:  213:    char *str=malloc((THREE*totalSize)+1);
+    #####:  214:    if(str==NULL)
+        -:  215:    {
+    #####:  216:        if(result) {
+    #####:  217:            *result = RLE_LIST_NULL_ARGUMENT;
+        -:  218:        }
+    #####:  219:        return NULL;
+        -:  220:    }
+    #####:  221:    int index=0;
+        -:  222:   // if(list->next==NULL)
+        -:  223:  //  {
+        -:  224:  //      return "";
+        -:  225:  //  }
+    #####:  226:    RLEList tmpList=list->next;
+    #####:  227:    char* tempSequence= malloc(sizeof (tempSequence)*(3*totalSize-1)); //!? 3
+    #####:  228:    while(tmpList!=NULL) 
+        -:  229:    {
+    #####:  230:        str[index++] = tmpList->character;
+        -:  231:        // char* tempSequence=ReverseNumber(tmpList->sequenceNum);
+    #####:  232:        sprintf(tempSequence, "%d", tmpList->sequenceNum);
+        -:  233:
+    #####:  234:        while (*tempSequence) {
+    #####:  235:            str[index++] = *(tempSequence++);
+        -:  236:        }
+    #####:  237:       str[index++] = '\n';
+    #####:  238:        tmpList = tmpList->next;
+        -:  239:
+        -:  240:    }
+    #####:  241:    if(result) {
+    #####:  242:        *result = RLE_LIST_SUCCESS;
+        -:  243:    }
+    #####:  244:    str[index++] = '\0';
+        -:  245:  // free(tempSequence);
+        -:  246:
+    #####:  247:    return str;
+        -:  248:}
